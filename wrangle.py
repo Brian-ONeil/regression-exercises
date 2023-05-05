@@ -1,3 +1,13 @@
+#######IMPORTS
+
+import pandas as pd
+import os
+import env
+
+
+#######FUNCTIONS
+
+
 def new_zillow_data(SQL_query):
     """
     This function will:
@@ -8,7 +18,6 @@ def new_zillow_data(SQL_query):
     url = env.get_db_url('zillow')
     
     return pd.read_sql(SQL_query, url)
-
 
 def get_zillow_data(SQL_query, filename = 'zillow.csv'):
     """
@@ -29,3 +38,4 @@ def get_zillow_data(SQL_query, filename = 'zillow.csv'):
 
         df.to_csv(filename)
         return df
+    
