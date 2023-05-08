@@ -31,6 +31,12 @@ def get_zillow_data(SQL_query, filename = 'zillow.csv'):
     - outputs iris df
     """
     
+    zillow_query = """
+        select bedroomcnt, bathroomcnt, calculatedfinishedsquarefeet, taxvaluedollarcnt, yearbuilt, taxamount, fips
+        from properties_2017
+        where propertylandusetypeid = '261';
+        """
+    
     if os.path.exists(filename): 
         df = pd.read_csv(filename)
         return df
@@ -39,6 +45,8 @@ def get_zillow_data(SQL_query, filename = 'zillow.csv'):
 
         df.to_csv(filename)
         return df
+    
+    
     
 
 def split_data(df, stratify_col):
@@ -75,6 +83,8 @@ def wrangle_zillow(df):
     df = df [df.taxvalue < df.taxvalue.quantile(.95)].copy()
     
     return df
+
+
 
 
     
