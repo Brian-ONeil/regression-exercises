@@ -7,6 +7,12 @@ import env
 
 #######FUNCTIONS
 
+zillow_query = """
+        select bedroomcnt, bathroomcnt, calculatedfinishedsquarefeet, taxvaluedollarcnt, yearbuilt,
+        taxamount, fips
+        from properties_2017
+        where propertylandusetypeid = '261';
+        """
 
 def new_zillow_data(SQL_query):
     """
@@ -19,7 +25,6 @@ def new_zillow_data(SQL_query):
     
     return pd.read_sql(SQL_query, url)
 
-
 def get_zillow_data(SQL_query, filename = 'zillow.csv'):
     """
     This function will:
@@ -31,12 +36,6 @@ def get_zillow_data(SQL_query, filename = 'zillow.csv'):
     - outputs iris df
     """
     
-    zillow_query = """
-        select bedroomcnt, bathroomcnt, calculatedfinishedsquarefeet, taxvaluedollarcnt, yearbuilt, taxamount, fips
-        from properties_2017
-        where propertylandusetypeid = '261';
-        """
-    
     if os.path.exists(filename): 
         df = pd.read_csv(filename)
         return df
@@ -45,9 +44,29 @@ def get_zillow_data(SQL_query, filename = 'zillow.csv'):
 
         df.to_csv(filename)
         return df
+
+def wrangle_zillow(df):
+    df = zillow_df
     
+    df.drop('Unnamed: 0', axis=1, inplace=True)
     
+    df.rename(columns={'calculatedfinishedsquarefeet': 'squarefeet', 'taxvaluedollarcnt': 'taxvalue',
+                       'fips': 'county'}, inplace=True)
     
+    df.dropna(inplace=True)
+    
+    df[['bedroomcnt', 'squarefeet', 'taxvalue', 'yearbuilt', 'county']] = df[['bedroomcnt', 'squarefeet',
+                                                                              'taxvalue', 'yearbuilt',
+                                                                              'county']].astype(int)
+
+    df.county = df.county.map({6037:'LA',6059:'Orange',6111:'Ventura'})
+    
+    df = df [df.squarefeet < 25_000]
+    
+    df = df [df.taxvalue < df.taxvalue.quantile(.95)].copy()
+    
+    return df
+
 
 def split_data(df, stratify_col):
     '''
@@ -65,24 +84,7 @@ def split_data(df, stratify_col):
     return train, validate, test
 
 
-def wrangle_zillow(df):
-    df = zillow_df
-    
-    df.drop('Unnamed: 0', axis=1, inplace=True)
-    
-    df.rename(columns={'calculatedfinishedsquarefeet': 'squarefeet', 'taxvaluedollarcnt': 'taxvalue', 'fips': 'county'}, inplace=True)
-    
-    df.dropna(inplace=True)
-    
-    df[['bedroomcnt', 'squarefeet', 'taxvalue', 'yearbuilt', 'county']] = df[['bedroomcnt', 'squarefeet', 'taxvalue', 'yearbuilt', 'county']].astype(int)
 
-    df.county = df.county.map({6037:'LA',6059:'Orange',6111:'Ventura'})
-    
-    df = df [df.squarefeet < 25_000]
-    
-    df = df [df.taxvalue < df.taxvalue.quantile(.95)].copy()
-    
-    return df
 
 
 
