@@ -68,20 +68,15 @@ def wrangle_zillow(df):
 
 
 
-def split_data(df, stratify_col):
+def split_data(df):
     '''
     Takes in two arguments the dataframe name and the ("name" - must be in string format) to stratify  and
     return train, validate, test subset dataframes will output train, validate, and test in that order
     '''
-    train, test = train_test_split(df, #first split
-                                   test_size=.2,
-                                   random_state=123,
-                                   stratify=df[stratify_col])
-    train, validate = train_test_split(train, #second split
-                                    test_size=.25,
-                                    random_state=123,
-                                    stratify=train[stratify_col])
+    train_validate, test = train_test_split(df, test_size=.2, random_state=123)
+    train, validate = train_test_split(train_validate, test_size=.25, random_state=123)
     return train, validate, test
+
 
 
 
