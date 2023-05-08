@@ -46,7 +46,6 @@ def get_zillow_data(SQL_query, filename = 'zillow.csv'):
         return df
 
 def wrangle_zillow(df):
-    df = zillow_df
     
     df.drop('Unnamed: 0', axis=1, inplace=True)
     
@@ -66,6 +65,7 @@ def wrangle_zillow(df):
     df = df [df.taxvalue < df.taxvalue.quantile(.95)].copy()
     
     return df
+
 
 
 def split_data(df, stratify_col):
