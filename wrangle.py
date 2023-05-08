@@ -71,3 +71,6 @@ def wrangle_zillow(df):
     
     df = df [df.taxvalue < df.taxvalue.quantile(.95)].copy()
     
+    return df
+
+    
