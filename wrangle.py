@@ -38,4 +38,36 @@ def get_zillow_data(SQL_query, filename = 'zillow.csv'):
 
         df.to_csv(filename)
         return df
+
+def split_data(df, stratify_col):
+    '''
+    Takes in two arguments the dataframe name and the ("name" - must be in string format) to stratify  and
+    return train, validate, test subset dataframes will output train, validate, and test in that order
+    '''
+    train, test = train_test_split(df, #first split
+                                   test_size=.2,
+                                   random_state=123,
+                                   stratify=df[stratify_col])
+    train, validate = train_test_split(train, #second split
+                                    test_size=.25,
+                                    random_state=123,
+                                    stratify=train[stratify_col])
+    return train, validate, test
+
+def wrangle_zillow(df):
+    df = zillow_df
+    
+    df.drop('Unnamed: 0', axis=1, inplace=True)
+    
+    df.rename(columns={'calculatedfinishedsquarefeet': 'squarefeet', 'taxvaluedollarcnt': 'taxvalue', 'fips': 'county'}, inplace=True)
+    
+    df.dropna(inplace=True)
+    
+    df[['bedroomcnt', 'squarefeet', 'taxvalue', 'yearbuilt', 'county']] = df[['bedroomcnt', 'squarefeet', 'taxvalue', 'yearbuilt', 'county']].astype(int)
+
+    df.county = df.county.map({6037:'LA',6059:'Orange',6111:'Ventura'})
+    
+    df = df [df.squarefeet < 25_000]
+    
+    df = df [df.taxvalue < df.taxvalue.quantile(.95)].copy()
     
