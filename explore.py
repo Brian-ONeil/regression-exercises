@@ -31,7 +31,7 @@ def plot_categorical_and_continuous_vars(df, cont_var, cat_var):
     plt.title(f'{cont_var} by {cat_var}')
     plt.show()
     
-        # Plot a violinplot of the continuous variable for each category
+    # Plot a violinplot of the continuous variable for each category
     plt.figure(figsize=(8, 6))
     sns.violinplot(x=cat_var, y=cont_var, data=df)
     plt.title(f'{cont_var} by {cat_var}')
