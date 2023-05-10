@@ -43,3 +43,26 @@ def plot_categorical_and_continuous_vars(df, cont_var, cat_var):
     plt.title(f'{cont_var} by {cat_var}')
     plt.show()
     
+def scale_data(train, 
+               validate, 
+               test, 
+               to_scale):
+    #make copies for scaling
+    train_scaled = train.copy()
+    validate_scaled = test.copy()
+    test_scaled = test.copy()
+
+    #scale them!
+    #make the thing
+    scaler = MinMaxScaler()
+
+    #fit the thing
+    scaler.fit(train[to_scale])
+
+    #use the thing
+    train_scaled[to_scale] = scaler.transform(train[to_scale])
+    validate_scaled[to_scale] = scaler.transform(validate[to_scale])
+    test_scaled[to_scale] = scaler.transform(test[to_scale])
+    
+    return train_scaled, validate_scaled, test_scaled
+
