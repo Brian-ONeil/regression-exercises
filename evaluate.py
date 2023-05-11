@@ -20,6 +20,9 @@ from sklearn.linear_model import LinearRegression
 from sklearn.feature_selection import f_regression 
 from math import sqrt
 import statsmodels.api as sm
+from sklearn.feature_selection import SelectKBest, RFE, f_regression, SequentialFeatureSelector
+from sklearn.linear_model import LinearRegression
+from sklearn.feature_selection import SelectKBest, f_classif
 
 ####functions
 
@@ -104,4 +107,56 @@ def better_than_baseline(y, yhat):
     else:
         return False
 
+def select_kbest(X, y, k):
+    """
+    Select the top k features based on the SelectKBest class and return their names.
+    
+    Parameters:
+    X (array-like): The predictors
+    y (array-like): The target variable
+    k (int): The number of features to select
+    
+    Returns:
+    list: A list of the names of the top k selected features
+    """
+    # Create a SelectKBest object and fit it to the data
+    selector = SelectKBest(f_regression, k=k)
+    selector.fit(X, y)
+    
+    # Get the indices of the top k selected features
+    idxs_selected = selector.get_support(indices=True)
+    
+    # Get the names of the top k selected features
+    features_selected = list(X.columns[idxs_selected])
+    
+    # Return the names of the top k selected features
+    return features_selected
+
+def rfe(X, y, k):
+    """
+    Select the top k features based on the RFE class and return their names.
+    
+    Parameters:
+    X (array-like): The predictors
+    y (array-like): The target variable
+    k (int): The number of features to select
+    
+    Returns:
+    list: A list of the names of the top k selected features
+    """
+    # Create a linear regression model
+    model = LinearRegression()
+    
+    # Create an RFE object and fit it to the data
+    selector = RFE(model, n_features_to_select=k)
+    selector.fit(X, y)
+    
+    # Get the indices of the top k selected features
+    idxs_selected = selector.get_support(indices=True)
+    
+    # Get the names of the top k selected features
+    features_selected = list(X.columns[idxs_selected])
+    
+    # Return the names of the top k selected features
+    return features_selected
 
